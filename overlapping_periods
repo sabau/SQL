@@ -1,0 +1,5 @@
+SELECT a.id,group_concat(b.id) as Overlaps, count(b.id)+1 as OverlapCount 
+FROM visits a 
+JOIN visits b on a.id < b.id and a.start < b.end and b.start < a.end 
+GROUP BY a.id 
+ORDER BY OverlapCount DESC;
