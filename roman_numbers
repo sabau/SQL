@@ -1,0 +1,29 @@
+CREATE PROCEDURE sortBookChapters()
+BEGIN
+	SELECT chapter_name FROM (
+        SELECT chapter_name, fR(chapter_number) as idx FROM book_chapters
+    
+    ) as i ORDER BY idx;
+END;
+CREATE FUNCTION fR (inR varchar(15)) RETURNS integer DETERMINISTIC
+  BEGIN
+
+    DECLARE nr CHAR(7) DEFAULT 'IVXLCDM';
+
+    DECLARE d TINYINT;
+    DECLARE pre INT DEFAULT 0;
+    DECLARE cur INT;
+    DECLARE sum INT DEFAULT 0;
+
+    SET inR = UPPER(inR);
+
+    WHILE LENGTH(inR) > 0 DO
+      SET d := LOCATE(RIGHT(inR, 1), nr) - 1;
+      SET cur := POW(10, FLOOR(d / 2)) * POW(5, MOD(d, 2));
+      SET sum := sum + POW(-1, cur < pre) * cur;
+      SET pre := cur;
+      SET inR = LEFT(inR, LENGTH(inR) - 1);
+    END WHILE;
+
+    RETURN sum;
+END;
